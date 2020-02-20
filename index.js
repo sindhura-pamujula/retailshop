@@ -2,22 +2,20 @@ const express = require('express');
 
 const path = require('path');
 const db = require('./config/database');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-  //testing connection
-    db.authenticate()
-    .then(()=> console.log('Connection has been established successfully.'))
-    .catch (()=>console.error('Unable to connect to the database:', error));
 
-   /* app.use('/api', (req, res, next) => {
-      res.set('Content-Type', 'application/json');
-      next();
-    });*/
-    
+//testing connection
+db.authenticate()
+.then(()=> console.log('Connection has been established successfully.'))
+.catch (()=>console.error('Unable to connect to the database:', error));
+
+      
 app.use('/api',require('./routes/api/products'));
-
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true})); 
 
 
 const PORT = process.env.PORT || 5000;

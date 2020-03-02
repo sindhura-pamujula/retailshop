@@ -12,10 +12,9 @@ db.authenticate()
 .then(()=> console.log('Connection has been established successfully.'))
 .catch (()=>console.error('Unable to connect to the database:', error));
 
-      
-app.use('/api',require('./routes/api/products'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true})); 
+app.use('/api',require('./routes/api/products'));
 
 
 const PORT = process.env.PORT || 5000;

@@ -1,8 +1,9 @@
 const express = require('express');
 const db = require('../../config/database');
 const Product = require('../../models/Product');
+const  Sequelize  = require('sequelize');
+const Op = Sequelize.Op;
 const router = express.Router();
-
 
 
 router.get('/',(req,res)=> res.send('index'));
@@ -15,14 +16,57 @@ Product.findAll()
 })
 .catch(err => console.log('error in get',err));
 });
-
+///products/:type?limit=10
+///products/:type?produtctname=apple?limit=10
+///products/:type?paoductname=apple&price[gte]=1000&price[lte]=20000&limit=10
+///products/:type?sortby=ascend
 router.get('/products/:type',async (req,res)=> {
     console.log("param is"+req.params.type);
-    const products = await Product.findAll({
-        where:{type:req.params.type}
-    });
-    console.log('products are '+JSON.stringify(products));
-    res.send(products);
+    
+    const producttype=req.params.type;
+    const name = req.query.productname;
+    const limitval = req.query.limit;
+ 
+    if(name != undefined && req.query.price != undefined){
+        const gtevalue = req.query.price.gte;
+        const ltevalue = req.query.price.lte;
+        console.log("query params:"+gtevalue,ltevalue,limitval);
+        const products = await Product.findAll({
+            where:{
+                type:producttype,
+                productname:name ,
+                price:{ 
+                    [Op.gte]:gtevalue,
+                    [Op.lte]:ltevalue
+                }   
+            },
+                limit:limitval 
+            
+        });
+        console.log('products are '+JSON.stringify(products));
+        res.send(products);
+    } else if(name != undefined) {
+            const products = await Product.findAll({
+                where:{
+                    type:producttype,
+                    productname:name   
+                },
+                limit:limitval
+            });
+            console.log('products are '+JSON.stringify(products));
+            res.send(products);
+    }
+    else {
+        const products = await Product.findAll({
+            where:{
+                type:producttype,   
+            },
+            limit:limitval
+        });
+        console.log('products are '+JSON.stringify(products));
+        res.send(products);
+    }
+   
 });
 
 router.post('/products',(req,res) => {

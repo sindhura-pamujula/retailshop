@@ -3,19 +3,12 @@ const db = require('../../config/database');
 const Product = require('../../models/Product');
 const  Sequelize  = require('sequelize');
 const Op = Sequelize.Op;
+const productsController = require('../../controllers/products');
 const router = express.Router();
 
 
 router.get('/',(req,res)=> res.send('index'));
-router.get('/products',(req,res)=> {
-Product.findAll()
-.then((products)=> 
-{ 
-    console.log('products are '+JSON.stringify(products));
-     res.send(products);
-})
-.catch(err => console.log('error in get',err));
-});
+router.get('/products',productsController.getAllProducts);
 ///products/:type?limit=10
 ///products/:type?produtctname=apple?limit=10
 ///products/:type?paoductname=apple&price[gte]=1000&price[lte]=20000&limit=10
@@ -80,4 +73,19 @@ Product.create({type,productname,price,description})
 } )
 .catch(err => console.log('err is',err));
 });
+
+router.put('/products/:id',(req,res) => {
+    console.log(req.params.id); 
+    let {type,productname,price,description}=req.body;
+    if(price !=undefined)
+    Product.update({price},{where:{id:req.params.id}});
+    res.send('product updated');
+    });
+
+router.delete('/products/:id',(req,res) => {
+    console.log(req.params.id); 
+    Product.destroy({where:{id:req.params.id}});
+    res.send('product deleted');
+} );
+
 module.exports=router;

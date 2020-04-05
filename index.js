@@ -15,7 +15,7 @@ db.authenticate()
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true})); 
 app.use('/api',require('./routes/api/products'));
-
+app.use('/api/login',require('./routes/api/users'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT,console.log(`server running on ${PORT}`));

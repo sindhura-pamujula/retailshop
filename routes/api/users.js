@@ -10,7 +10,7 @@ router.get('/',async (req,res)=>{
     console.log('users are '+JSON.stringify(users));
     res.send(users);
 });
-router.post('/',(req,res)=>{
+router.post('/register',(req,res)=>{
     console.log(req.body);
     let {full_name,email,gender,date_of_birth}=req.body;
     User.create({full_name,email,gender,date_of_birth})

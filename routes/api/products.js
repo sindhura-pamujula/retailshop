@@ -7,10 +7,10 @@ router.get('/',(req,res)=> res.send('index'));
 router.get('/products',productsController.getAllProducts);
 router.get('/products/:type',productsController.getProductsByType);
 
-router.post('/products',productsController.insertProduct);
+router.post('/product',productsController.insertProduct);
 
-router.put('/products/:id',productsController.updateProduct);
+router.put('/product/:id',productsController.updateProduct);
 
-router.delete('/products/:id',productsController.deleteProduct);
+router.delete('/product/:id',productsController.deleteProduct);
 
 module.exports=router;

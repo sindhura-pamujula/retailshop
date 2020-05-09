@@ -15,4 +15,5 @@ const Order = db.define('orders', {
         type: DataTypes.STRING,
     }
 });
-module.exports = Order;
+
+  module.exports = Order;

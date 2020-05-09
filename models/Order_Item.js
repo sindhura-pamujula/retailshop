@@ -13,4 +13,12 @@ const Order_Item = db.define('order_items', {
         type: DataTypes.INTEGER,
     }
 });
+Order_Item.associate = models =>{
+    Order_Item.belongsTo(models.Order,{
+      foreignKey:{
+          allowNull:false
+      }
+    });
+  };
+
 module.exports = Order_Item;

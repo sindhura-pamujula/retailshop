@@ -35,25 +35,39 @@ router.get('/:orderId',(req,res)=>{
 router.post('/',(req,res)=>{
     console.log(req.body);
     let {user_id,status}=req.body;
+    let orderitem = req.body.items;
+    let orderid = 0;
+    /*
     Order.create({user_id,status})
     .then(Order => {
-        console.log('res Order'+Order);
-        res.send(Order);
+        console.log('res Order'+JSON.stringify(Order));
+        orderitem.forEach(element=> {
+            let order_id=Order.id;
+            let {product_id,quantity}=element;
+            Order_Item.create({order_id,product_id,quantity})
+            .then(OrderItem => {
+                console.log('res Order'+JSON.stringify(OrderItem));
+               // res.send(OrderItem);
+            })
+            .catch(err => console.log('err is',err));
+        });
+        res.status(201).send({"msg":"sucess"});
     })
     .catch(err => console.log('err is',err));
-});
+    */
+   //with associations
+    Order.hasMany(Order_Item,{
+    foreignKey:'order_id'
+  });
+   Order.create({
+    user_id:user_id ,
+    status:status,
+    order_items: orderitem
+  }, {
+        include: [ Order_Item ]
+  });
+  res.status(201).send({"msg":"sucess"});
 
-//posting an orderitem
-router.post('/:orderId',(req,res)=>{
-    console.log(req.body);
-    let order_id=req.params.orderId;
-    let {product_id,quantity}=req.body;
-    Order_Item.create({order_id,product_id,quantity})
-    .then(OrderItem => {
-        console.log('res Order'+OrderItem);
-        res.send(OrderItem);
-    })
-    .catch(err => console.log('err is',err));
 });
 
 module.exports=router;

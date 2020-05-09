@@ -16,6 +16,10 @@ const User = db.define('members', {
     type: DataTypes.STRING,
     allowNull:false
   },
+  password:{
+    type: DataTypes.STRING,
+    allowNull:false
+  },
   gender: {
     type: DataTypes.STRING,
     allowNull:false
@@ -25,4 +29,5 @@ const User = db.define('members', {
     allowNull:false
   }
 });
+
 module.exports = User;

@@ -6,7 +6,11 @@ const Order_Item = require('../../models/Order_Item');
 const  Sequelize  = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const auth = require('./auth');
+const userauth = require('./auth');
+const auth = require('../../middileware/auth');
+const Joi = require('@hapi/joi');
+const validator = require('express-joi-validation').createValidator({});
+const fetch = require('node-fetch');
 const config = {
     "jwtSecret":"passSecret"
 };
@@ -19,9 +23,11 @@ router.get('/',async (req,res)=>{
     console.log('users are '+JSON.stringify(users));
     res.send(users);
 });
+//private
 //get all user details and orders.
-router.get('/:userid/orders',async(req,res)=>{
+router.get('/:userid/orders',auth,async(req,res)=>{
     console.log('userid',req.params.userid);
+    //console.log('req.user',req.user.id);
       User.hasMany(Order,{
        foreignKey:'user_id'
       });
@@ -98,9 +104,41 @@ router.post('/register',async (req,res)=>{
     });
    
 });
+const bodySchema = Joi.object({
+    email: Joi.string().email().required(),
+    password:Joi.string().min(5).max(10).required()
+  })
+
 //@desc authenticate user
-router.post('/auth',auth.authUser);
-router.delete('/delete/:email', (req,res)=>{
+//normal way
+//router.post('/auth',validator.body(bodySchema),userauth.authUser);
+//using auth microservice
+router.post('/auth',validator.body(bodySchema),async (req,res)=>{
+     fetch('http://localhost:3000/',{
+        method:'POST',
+        headers:{
+            'Content-Type': 'application/json',
+        },
+        body:JSON.stringify(req.body),
+    })
+    .then(response=>{
+        res.status(response.status);
+        console.log(response);
+        response.text().then( (text) =>{
+            // do something with the text response
+            console.log(text); 
+            res.send(JSON.parse(text));
+          })
+    })
+    .catch(err=> console.log(err));
+    /*
+     const response= await Promise.all(promise);
+   const resjson= await response.json();
+   res.json({res:response.json()});
+  */ 
+});
+//@private 
+router.delete('/delete/:email',auth, (req,res)=>{
     User.destroy({
         where: {
             email: req.params.email

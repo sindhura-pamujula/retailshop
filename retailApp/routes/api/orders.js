@@ -3,6 +3,7 @@ const db = require('../../config/database');
 const Order = require('../../models/Order');
 const Order_Item = require('../../models/Order_Item');
 const  Sequelize  = require('sequelize');
+const auth = require('../../middileware/auth');
 const router = express.Router();
 
 router.get('/',async (req,res)=>{
@@ -30,9 +31,9 @@ router.get('/:orderId',(req,res)=>{
   
 });
 
-
+//@private 
 //posting an order
-router.post('/',(req,res)=>{
+router.post('/',auth,(req,res)=>{
     console.log(req.body);
     let {user_id,status}=req.body;
     let orderitem = req.body.items;

@@ -1,9 +1,15 @@
+
+const User = require('../../models/User');
+const bcrypt = require('bcryptjs'); 
+const jwt = require('jsonwebtoken');
+const config = {
+    "jwtSecret":"passSecret"
+};
+
+  
 module.exports.authUser= async function (req,res){
     console.log(req.body);
     let {email,password}=req.body;
-    if( !email || !password ){
-        return res.status(400).json({msg:'please enter all fileds'});
-    }
     let user = await User.findAll({where:{email}});
     console.log('user is',JSON.stringify(user));
     user=JSON.parse(JSON.stringify(user));
@@ -12,7 +18,7 @@ module.exports.authUser= async function (req,res){
         return res.status(400).json({msg:'user doesnt  exists'});
     }
     //validate password
-    bcrypt.compare(password,user.password)
+    bcrypt.compare(password,user[0].password)
     .then(isMatch=> {
         if(!isMatch) return res.status(400).json({msg:'invalid credentials'});
         jwt.sign(
@@ -24,9 +30,9 @@ module.exports.authUser= async function (req,res){
                 res.json({
                     token,
                     user:{
-                        id:user.id,
-                        name:user.full_name,
-                        email:user.email
+                        id:user[0].id,
+                        name:user[0].full_name,
+                        email:user[0].email
                     }
                 });
             }

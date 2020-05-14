@@ -19,3 +19,4 @@ app.use('/',require('./routes/authoriseService'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT,console.log(`auth server running on ${PORT}`));
+module.exports=app;
